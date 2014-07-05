@@ -3,21 +3,21 @@
 MOSNTPClock is a class interface to an augmented version of ios-ntp.
 Please see below for the original README about ios-ntp.
 
-See the "xcode" directory for an example.  example-MOSNTPClock.xcodeproj
-depends on "ios-ntp" and "classes".
+See the "xcode" directory for an example built to iOS 7.1.
+example-MOSNTPClock.xcodeproj depends on "ios-ntp" and "classes".
 
 
-### About
+### Overview
 
 Implement timer to limit usage of NTP:
-  * Provides simple backoff in case of failure
-  * Use previous synchroniation values (if any) in case of error
+  * Provides simple backoff in case of failure;
+  * Use previous synchronization values (if any) in case of error.
 
 Class level notifications regarding success/failure.
 
-Provide NTP time -OR- NTP time + arbitrary offset.  
+Provide NTP time -OR- NTP time + arbitrary offset.
 
-Test whether NTP protocol is currently active
+Test whether NTP protocol is currently active.
 
 Test whether last iteration of time synchronization was successful.
 
@@ -36,11 +36,11 @@ Test whether last iteration of time synchronization was successful.
 ### Changes to ios-ntp
 
   * Adapted ios-ntp.h to include ios-ntp-prefix.h --
-      Preceded with optional #define IOS_NTP_LOGGING.
+      Preceded with optional #define IOS_NTP_LOGGING
   * Added instance variable NetworkClock :: enableUponForegrounding --
-      Allows the class to be foregrounded without re-activating NTP.
+      Allows the class to be foregrounded without re-activating NTP
   * Add NetworkClock :: networkTimeWithOffset --
-      Allows fudge factor on returned time.
+      Allows fudge factor on returned time
   * Clarify Notification identifiers: kNetAssociationNotification{Good,Fail}
   * Specify C language numeric types
 
