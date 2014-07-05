@@ -1,10 +1,16 @@
 //
 // MOSNTPClock.m
 //
-// Wrapper and mediation of ios-ntp.  
-//   Git cloned from https://github.com/jbenet/ios-ntp .
-// Modified version of ios-ntp is stored in mobilesound/thirdparty/ios-ntp .
-//   (As of Fri Jul  4 12:59:25 EDT 2014.)
+// Implement timer to limit usage of NTP.
+//   . Provides simple backoff in case of failure
+//   . Use previous synchroniation values (if any) in case of error
+// Class level notifications regarding success/failure.
+// Provide NTP time -OR- time + arbitrary offset.  
+// Test whether NTP protocol is currently active; test whether last iteration 
+//   of time synchronization was successful.
+// 
+// Wrapper for ios-ntp.  Cloned from https://github.com/jbenet/ios-ntp 
+//   circa early July 2014.
 //
 //
 // BUILD REQUIREMENTS for ios-ntp--
@@ -14,21 +20,22 @@
 //       NetworkClock.m       -fno-objc-arc 
 //
 // CHANGES to ios-ntp--
-//     . Adapted ios-ntp.h to include ios-ntp-prefix.h
-//         Preceded with optional #define IOS_NTP_LOGGING.
-//     . Added instance variable NetworkClock :: enableUponForegrounding
-//         Allows the class to be foregrounded without re-activating NTP.
-//     . Add NetworkClock :: networkTimeWithOffset 
-//         Allows fudge factor on returned time.
-//     . Clarify Notification identifiers: kNetAssociationNotification{Good,Fail}
-//     . Specify numeric types in C code
+//   . Adapted ios-ntp.h to include ios-ntp-prefix.h
+//       Preceded with optional #define IOS_NTP_LOGGING.
+//   . Added instance variable NetworkClock :: enableUponForegrounding
+//       Allows the class to be foregrounded without re-activating NTP.
+//   . Add NetworkClock :: networkTimeWithOffset 
+//       Allows fudge factor on returned time.
+//   . Clarify Notification identifiers: kNetAssociationNotification{Good,Fail}
+//   . Specify numeric types in C code
 //
 // NB
 //   NetworkClock :: sharedNetworkClock may still be started without custom
-//     configuration if [NSDate networkTime] executes before [self sharedNTPClient].
-//     This case may return (unstable) time before kMOSNTPClockSuccessCountThreshold is achieved.
-//   By contrast, [self date] and [self differenceFromSystemDate] will return out of bound
-//     values upon error or prior to NTP synchronization.
+//     configuration if [NSDate networkTime] executes before [self 
+//     sharedNTPClient].  This case may return (unstable) time before 
+//     kMOSNTPClockSuccessCountThreshold is achieved.
+//   By contrast, [self date] and [self differenceFromSystemDate] will return 
+//     out of bound values upon error or prior to NTP synchronization.
 //
 //
 // DEPENDENCIES -- MOSLog
