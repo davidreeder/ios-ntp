@@ -1,11 +1,11 @@
 //
 // MOSNTPClock.m
 //
-// Implement timer to limit usage of NTP.
+// Implement timer to limit usage of NTP:
 //   . Provides simple backoff in case of failure
 //   . Use previous synchroniation values (if any) in case of error
 // Class level notifications regarding success/failure.
-// Provide NTP time -OR- time + arbitrary offset.  
+// Provide NTP time -OR- NTP time + arbitrary offset.  
 // Test whether NTP protocol is currently active; test whether last iteration 
 //   of time synchronization was successful.
 // 
@@ -27,7 +27,7 @@
 //   . Add NetworkClock :: networkTimeWithOffset 
 //       Allows fudge factor on returned time.
 //   . Clarify Notification identifiers: kNetAssociationNotification{Good,Fail}
-//   . Specify numeric types in C code
+//   . Specify C language numeric types
 //
 // NB
 //   NetworkClock :: sharedNetworkClock may still be started without custom
