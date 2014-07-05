@@ -14,6 +14,8 @@
 + (NSTimeInterval) timeIntervalSinceNetworkDate;
 
 + (NSDate *) networkDate;
++ (NSDate *) networkDateWithOffset:(NSTimeInterval)offset;
+
 + (NSDate *) threadsafeNetworkDate;
   // the threadsafe version guards against reading a double that could be
   // potentially being updated at the same time. Since doubles are 8 words,

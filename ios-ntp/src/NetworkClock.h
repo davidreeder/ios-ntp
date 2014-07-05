@@ -21,6 +21,9 @@
 
     NSMutableArray *        timeAssociations;
 
+@public
+    BOOL                    enableUponForegrounding;
+
 @private
     
     NSSortDescriptor *      dispersionSortDescriptor;
@@ -37,5 +40,6 @@
 - (void) finishAssociations;
 
 - (NSDate *) networkTime;
+- (NSDate *) networkTimeWithOffset:(NSTimeInterval)offset;
 
 @end

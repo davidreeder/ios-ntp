@@ -17,6 +17,11 @@
   return [[NetworkClock sharedNetworkClock] networkTime];
 }
 
++ (NSDate *) networkDateWithOffset:(NSTimeInterval)offset {
+  return [[NetworkClock sharedNetworkClock] networkTimeWithOffset:offset];
+}
+
+
 + (NSDate *) threadsafeNetworkDate {
   NetworkClock *sharedClock = [NetworkClock sharedNetworkClock];
   @synchronized(sharedClock) {

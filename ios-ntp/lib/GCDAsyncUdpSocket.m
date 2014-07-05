@@ -4244,7 +4244,7 @@ static NSThread *listenerThread;
 		// So we'll just create a timer that will never fire - unless the server runs for a decades.
 		[NSTimer scheduledTimerWithTimeInterval:[[NSDate distantFuture] timeIntervalSinceNow]
 		                                 target:self
-		                               selector:@selector(ignore:)
+		                               selector:@selector(ignore)
 		                               userInfo:nil
 		                                repeats:YES];
 		
@@ -4252,6 +4252,11 @@ static NSThread *listenerThread;
 		
 		LogInfo(@"ListenerThread: Stopped");
 	}
+}
+
++ (void)ignore 
+{
+  // EMPTY
 }
 
 + (void)addStreamListener:(GCDAsyncUdpSocket *)asyncUdpSocket

@@ -58,6 +58,7 @@
 /*┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
   │ .. and fill that array with the time hosts obtained from "ntp.hosts" ..                          │
   └──────────────────────────────────────────────────────────────────────────────────────────────────┘*/
+    enableUponForegrounding = YES;
     [self createAssociations];                  
 /*┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
   │ prepare to catch our application entering and leaving the background ..                          │
@@ -123,6 +124,13 @@
 
 }
 
+- (NSDate *) networkTimeWithOffset:(NSTimeInterval)offset {
+    return [[NSDate date] dateByAddingTimeInterval:-timeIntervalSinceDeviceTime+offset];
+    
+    //[[NSNotificationCenter defaultCenter] postNotificationName:@"net-time" object:self];
+    
+}
+
 #pragma mark                        I n t e r n a l  •  M e t h o d s
 
 /*┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
@@ -162,8 +170,8 @@
 
 - (void) enableAssociations {
     [timeAssociations makeObjectsPerformSelector:@selector(enable)];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(associationTrue:) name:@"assoc-good" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(associationFake:) name:@"assoc-fail" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(associationTrue:) name:kNetAssociationNotificationGood object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(associationFake:) name:kNetAssociationNotificationFail object:nil];
 }
 
 - (void) reportAssociations {
@@ -175,8 +183,8 @@
   ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛*/
 - (void) finishAssociations {
     [timeAssociations makeObjectsPerformSelector:@selector(finish)];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"assoc-good" object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"assoc-fail" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kNetAssociationNotificationGood object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kNetAssociationNotificationFail object:nil];
 }
 
 #import <arpa/inet.h>
@@ -201,8 +209,8 @@
   ┃ associationTrue -- notification from a 'truechimer' association of a trusty offset               ┃
   ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛*/
 - (void) associationTrue:(NSNotification *) notification {
-    NTP_Logging(@"*** true association: %@ (%i left)",
-                    [notification object], [timeAssociations count]);
+    NTP_Logging(@"*** true association: %@ (%lu left)",
+                    [notification object], (unsigned long)[timeAssociations count]);
     [self offsetAverage];
 }
 
@@ -213,7 +221,7 @@
 - (void) associationFake:(NSNotification *) notification {
     if ([timeAssociations count] > 8) {
         NetAssociation *    association = [notification object];
-        NTP_Logging(@"*** false association: %@ (%i left)", association, [timeAssociations count]);
+        NTP_Logging(@"*** false association: %@ (%lu left)", association, (unsigned long)[timeAssociations count]);
         [timeAssociations removeObject:association];
         [association finish];
         association = nil;
@@ -233,7 +241,9 @@
   ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛*/
 - (void) applicationFore:(NSNotification *) notification {
     LogInProduction(@"*** application -> Foreground");
-    [self enableAssociations];
+    if (enableUponForegrounding) {
+        [self enableAssociations];
+    }
 }
 
 @end

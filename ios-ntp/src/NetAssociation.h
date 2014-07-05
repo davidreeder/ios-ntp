@@ -10,6 +10,11 @@
 #import "GCDAsyncUdpSocket.h"
 #include <sys/time.h>
 
+
+#define kNetAssociationNotificationGood  @"kNetAssociationNotificationGood"
+#define kNetAssociationNotificationFail  @"kNetAssociationNotificationFail"
+
+
 /*┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
   │  NTP Timestamp Structure                                                                         │
   │                                                                                                  │
